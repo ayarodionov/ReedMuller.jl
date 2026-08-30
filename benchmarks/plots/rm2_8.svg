@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" font-family="-apple-system,Helvetica,Arial,sans-serif">
+<rect width="640" height="420" fill="#fcfcfb"/>
+<line x1="64" y1="376.0" x2="450" y2="376.0" stroke="#dddad2" stroke-width="1"/>
+<text x="56" y="380.0" font-size="12" fill="#52514e" text-anchor="end">1e-5</text>
+<line x1="64" y1="305.6" x2="450" y2="305.6" stroke="#dddad2" stroke-width="1"/>
+<text x="56" y="309.6" font-size="12" fill="#52514e" text-anchor="end">1e-4</text>
+<line x1="64" y1="235.2" x2="450" y2="235.2" stroke="#dddad2" stroke-width="1"/>
+<text x="56" y="239.2" font-size="12" fill="#52514e" text-anchor="end">1e-3</text>
+<line x1="64" y1="164.8" x2="450" y2="164.8" stroke="#dddad2" stroke-width="1"/>
+<text x="56" y="168.8" font-size="12" fill="#52514e" text-anchor="end">1e-2</text>
+<line x1="64" y1="94.4" x2="450" y2="94.4" stroke="#dddad2" stroke-width="1"/>
+<text x="56" y="98.4" font-size="12" fill="#52514e" text-anchor="end">1e-1</text>
+<line x1="64" y1="24.0" x2="450" y2="24.0" stroke="#dddad2" stroke-width="1"/>
+<text x="56" y="28.0" font-size="12" fill="#52514e" text-anchor="end">1</text>
+<line x1="64.0" y1="24" x2="64.0" y2="376" stroke="#dddad2" stroke-width="1"/>
+<text x="64.0" y="398" font-size="12" fill="#52514e" text-anchor="middle">0</text>
+<line x1="192.66666666666666" y1="24" x2="192.66666666666666" y2="376" stroke="#dddad2" stroke-width="1"/>
+<text x="192.66666666666666" y="398" font-size="12" fill="#52514e" text-anchor="middle">1</text>
+<line x1="321.3333333333333" y1="24" x2="321.3333333333333" y2="376" stroke="#dddad2" stroke-width="1"/>
+<text x="321.3333333333333" y="398" font-size="12" fill="#52514e" text-anchor="middle">2</text>
+<line x1="450.0" y1="24" x2="450.0" y2="376" stroke="#dddad2" stroke-width="1"/>
+<text x="450.0" y="398" font-size="12" fill="#52514e" text-anchor="middle">3</text>
+<text x="257.0" y="412" font-size="13" fill="#0b0b0b" text-anchor="middle">Eb/N0 (dB)</text>
+<text x="16" y="200.0" font-size="13" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 16 200.0)">Word error rate</text>
+<text x="64" y="14" font-size="14" fill="#0b0b0b" font-weight="600">RM(2, 8) — n=256, BI-AWGN, 100,000 trials/point</text>
+<path d="M64.0,24.0 L192.7,24.0 L321.3,24.2 L450.0,25.0" fill="none" stroke="#2a78d6" stroke-width="2.5"/>
+<circle cx="64.0" cy="24.0" r="4.5" fill="#2a78d6"/>
+<circle cx="192.66666666666666" cy="24.030589628890844" r="4.5" fill="#2a78d6"/>
+<circle cx="321.3333333333333" cy="24.15325511550093" r="4.5" fill="#2a78d6"/>
+<circle cx="450.0" cy="24.96280609562612" r="4.5" fill="#2a78d6"/>
+<path d="M64.0,43.0 L192.7,72.9 L321.3,129.4 L450.0,229.4" fill="none" stroke="#eb6834" stroke-width="2.5"/>
+<circle cx="64.0" cy="42.952927793086204" r="4.5" fill="#eb6834"/>
+<circle cx="192.66666666666666" cy="72.90326359095769" r="4.5" fill="#eb6834"/>
+<circle cx="321.3333333333333" cy="129.42913075309593" r="4.5" fill="#eb6834"/>
+<circle cx="450.0" cy="229.3719099297219" r="4.5" fill="#eb6834"/>
+<path d="M64.0,76.3 L192.7,126.0 L321.3,205.8 L450.0,316.5" fill="none" stroke="#1baf7a" stroke-width="2.5"/>
+<circle cx="64.0" cy="76.25942832920941" r="4.5" fill="#1baf7a"/>
+<circle cx="192.66666666666666" cy="125.97792014270959" r="4.5" fill="#1baf7a"/>
+<circle cx="321.3333333333333" cy="205.75158909108993" r="4.5" fill="#1baf7a"/>
+<circle cx="450.0" cy="316.5050979829963" r="4.5" fill="#1baf7a"/>
+<path d="M64.0,36.1 L192.7,50.9 L321.3,77.1 L450.0,121.4" fill="none" stroke="#eda100" stroke-width="2.5"/>
+<circle cx="64.0" cy="36.10773947863203" r="4.5" fill="#eda100"/>
+<circle cx="192.66666666666666" cy="50.88941399146867" r="4.5" fill="#eda100"/>
+<circle cx="321.3333333333333" cy="77.11590818588385" r="4.5" fill="#eda100"/>
+<circle cx="450.0" cy="121.43711636338936" r="4.5" fill="#eda100"/>
+<path d="M64.0,64.8 L192.7,105.6 L321.3,172.6 L450.0,277.6" fill="none" stroke="#e87ba4" stroke-width="2.5"/>
+<circle cx="64.0" cy="64.83511530632104" r="4.5" fill="#e87ba4"/>
+<circle cx="192.66666666666666" cy="105.6123802833288" r="4.5" fill="#e87ba4"/>
+<circle cx="321.3333333333333" cy="172.55373482342353" r="4.5" fill="#e87ba4"/>
+<circle cx="450.0" cy="277.5850233894886" r="4.5" fill="#e87ba4"/>
+<path d="M64.0,63.5 L192.7,99.7 L321.3,155.9 L450.0,239.8" fill="none" stroke="#008300" stroke-width="2.5"/>
+<circle cx="64.0" cy="63.47097835434951" r="4.5" fill="#008300"/>
+<circle cx="192.66666666666666" cy="99.69436189582699" r="4.5" fill="#008300"/>
+<circle cx="321.3333333333333" cy="155.85182219511753" r="4.5" fill="#008300"/>
+<circle cx="450.0" cy="239.8113090324528" r="4.5" fill="#008300"/>
+<path d="M64.0,81.8 L192.7,135.1 L321.3,219.0 L450.0,354.8" fill="none" stroke="#4a3aa7" stroke-width="2.5"/>
+<circle cx="64.0" cy="81.80002291056087" r="4.5" fill="#4a3aa7"/>
+<circle cx="192.66666666666666" cy="135.1190835483639" r="4.5" fill="#4a3aa7"/>
+<circle cx="321.3333333333333" cy="218.9763959349695" r="4.5" fill="#4a3aa7"/>
+<circle cx="450.0" cy="354.80748830525573" r="4.5" fill="#4a3aa7"/>
+<path d="M64.0,58.4 L192.7,89.6 L321.3,139.9 L450.0,213.0" fill="none" stroke="#e34948" stroke-width="2.5"/>
+<circle cx="64.0" cy="58.36341138708725" r="4.5" fill="#e34948"/>
+<circle cx="192.66666666666666" cy="89.59971533307022" r="4.5" fill="#e34948"/>
+<circle cx="321.3333333333333" cy="139.87076588402297" r="4.5" fill="#e34948"/>
+<circle cx="450.0" cy="212.95568767983298" r="4.5" fill="#e34948"/>
+<circle cx="471" cy="36" r="5" fill="#2a78d6"/>
+<text x="482" y="40" font-size="12" fill="#0b0b0b">Reed (hard)</text>
+<circle cx="471" cy="56" r="5" fill="#eb6834"/>
+<text x="482" y="60" font-size="12" fill="#0b0b0b">Sidelnikov-Pershakov</text>
+<circle cx="471" cy="76" r="5" fill="#1baf7a"/>
+<text x="482" y="80" font-size="12" fill="#0b0b0b">RPA</text>
+<circle cx="471" cy="96" r="5" fill="#eda100"/>
+<text x="482" y="100" font-size="12" fill="#0b0b0b">Dumer FHT leaves</text>
+<circle cx="471" cy="116" r="5" fill="#e87ba4"/>
+<text x="482" y="120" font-size="12" fill="#0b0b0b">AED-8 / Dumer-FHT</text>
+<circle cx="471" cy="136" r="5" fill="#008300"/>
+<text x="482" y="140" font-size="12" fill="#0b0b0b">DS16 FHT leaves</text>
+<circle cx="471" cy="156" r="5" fill="#4a3aa7"/>
+<text x="482" y="160" font-size="12" fill="#0b0b0b">GLP cyclic</text>
+<circle cx="471" cy="176" r="5" fill="#e34948"/>
+<text x="482" y="180" font-size="12" fill="#0b0b0b">GLP pairs (PmCr)</text>
+<text x="466" y="200" font-size="10.5" fill="#52514e">○ = 0 errors observed</text>
+<text x="466" y="214" font-size="10.5" fill="#52514e">(floor shown at 1/trials)</text>
+</svg>

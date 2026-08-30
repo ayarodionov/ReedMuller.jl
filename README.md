@@ -107,6 +107,11 @@ prints a WER table for every pipeline:
 julia --project=. benchmarks/compare.jl
 ```
 
+For a larger-scale, longer-running comparison at RM(2,8), RM(2,9), and
+RM(2,10) (100,000 trials/point, all decoders including the generic
+wrappers), see [benchmarks/RESULTS.md](benchmarks/RESULTS.md) — it
+includes WER charts and the reproduction commands.
+
 ## Adding a new algorithm
 
 1. Create `src/decoders/<name>.jl` (or add an encoder in
