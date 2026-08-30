@@ -3,3 +3,4 @@ Manifest.toml
 *.cov
 /docs/build/
 benchmarks/results/
+*.pdf

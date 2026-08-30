@@ -31,6 +31,7 @@ export ReedDecoder, FHTDecoder, DumerDecoder, DumerShabunovDecoder
 export SidelnikovPershakovDecoder, RPADecoder, BPDecoder
 export AutomorphismEnsembleDecoder, ChaseDecoder, GMDDecoder, MLDecoder
 export GLPDecoder, glp_permutations
+export GraphSearchDecoder
 export BSC, BIAWGN, BIAWGN_from_ebn0, transmit, hard_llr
 export simulate, SimResult
 
@@ -46,6 +47,7 @@ include("decoders/rpa.jl")
 include("decoders/bp.jl")
 include("decoders/aed.jl")
 include("decoders/glp.jl")
+include("decoders/graph_search.jl")
 include("decoders/wrappers.jl")
 include("channels.jl")
 include("simulate.jl")

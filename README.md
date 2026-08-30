@@ -57,6 +57,7 @@ mismatched bases.
 | `BPDecoder` | decoder | soft, iterative | `:monomial` | any RM(r,m) | O(it·Σ row wt) |
 | `MLDecoder` | decoder | soft, exact ML | either | k ≤ 24 | O(2^k·n) |
 | `GLPDecoder` | decoder | soft, list+perms | `:plotkin` | any RM(r,m) | O(L·n log n) |
+| `GraphSearchDecoder` | decoder | soft, near-ML | `:plotkin` | any RM(r,m) | O(N·l·n log n) |
 
 Options: `DumerDecoder`/`DumerShabunovDecoder` take `leaves = :fht` to
 terminate the recursion at first-order nodes with (list-)FHT decoding
@@ -136,6 +137,8 @@ julia --project=. -e 'using Pkg; Pkg.test()'
   Reed-Muller codes", IEEE Trans. Inf. Theory, 2004.
 * I. Dumer, K. Shabunov, "Soft-decision decoding of Reed-Muller
   codes: recursive lists", IEEE Trans. Inf. Theory, 2006.
+* M. Kamenev, "On decoding of Reed-Muller codes using a local graph
+  search", IEEE Trans. Commun., 2022.
 * K. Shabunov, ecclab — recursive decoding simulation programs
   (reference C implementations of dtrm0/dtrm1/dtrm_glp),
   https://github.com/kshabunov/ecclab.

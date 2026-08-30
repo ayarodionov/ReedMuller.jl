@@ -28,6 +28,7 @@ pipelines = [
     ("D-S list L=16, FHT leaves",  PlotkinEncoder(),    DumerShabunovDecoder(16, leaves = :fht)),
     ("GLP cyclic, L=48",           PlotkinEncoder(),    GLPDecoder(CODE, 48; perms = :cyclic)),
     ("GLP pairs (PmCr), L=60",     PlotkinEncoder(),    GLPDecoder(CODE, 60; perms = :pairs)),
+    ("Graph search, N=32",         PlotkinEncoder(),    GraphSearchDecoder(iters = 32)),
 ]
 
 println("Code: $CODE, BI-AWGN, $TRIALS trials per point\n")

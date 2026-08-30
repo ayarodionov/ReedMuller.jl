@@ -79,6 +79,10 @@ end
         (RMCode(2, 4), PlotkinEncoder(), MLDecoder(RMCode(2, 4); basis = :plotkin)),
         (RMCode(2, 5), PlotkinEncoder(), GLPDecoder(RMCode(2, 5), 32; perms = :pairs)),
         (RMCode(3, 6), PlotkinEncoder(), GLPDecoder(RMCode(3, 6), 16; perms = :cyclic)),
+        (RMCode(2, 5), PlotkinEncoder(), GraphSearchDecoder()),
+        (RMCode(3, 6), PlotkinEncoder(), GraphSearchDecoder(iters = 16)),
+        (RMCode(0, 4), PlotkinEncoder(), GraphSearchDecoder()),
+        (RMCode(4, 4), PlotkinEncoder(), GraphSearchDecoder(iters = 4)),
     ]
     for (c, enc, dec) in cases
         for _ in 1:20
@@ -328,6 +332,39 @@ end
     @test_throws ArgumentError GLPDecoder(c, 16; perms = [[1, 2, 2, 4, 5, 6]])
     @test_throws ArgumentError GLPDecoder(c, 16; perms = Vector{Int}[])
     @test_throws DimensionMismatch decode(GLPDecoder(c, 8; perms = :cyclic), c, zeros(5))
+end
+
+@testset "graph search decoding" begin
+    # Example 1 of Kamenev 2022: the ML codeword for this LLR vector
+    # is (0,0,1,0,0,0,0,1) with correlation 28.72.
+    c3 = RMCode(2, 3)
+    y = [2.76, 5.68, -6.58, 4.42, -0.09, 3.9, 3.56, -1.91]
+    msg = decode(GraphSearchDecoder(iters = 10, l = 2, lbar = 1, s = 1), c3, y)
+    cw = encode(PlotkinEncoder(), c3, msg)
+    @test cw == BitVector([0, 0, 1, 0, 0, 0, 0, 1])
+    @test msg == decode(MLDecoder(c3; basis = :plotkin), c3, y)
+
+    # Near-ML on a noisy batch: clearly better than its own starting
+    # point (Dumer with FHT leaves).
+    rng = MersenneTwister(15)
+    c = RMCode(2, 6)
+    enc = PlotkinEncoder()
+    chn = ReedMuller.BIAWGN_from_ebn0(1.5, c)
+    e_gs = 0
+    e_dumer = 0
+    for _ in 1:200
+        m0 = bitrand(rng, dimension(c))
+        llr = transmit(rng, chn, encode(enc, c, m0))
+        e_gs += decode(GraphSearchDecoder(iters = 32), c, llr) != m0
+        e_dumer += decode(DumerDecoder(leaves = :fht), c, llr) != m0
+    end
+    @test e_gs < e_dumer
+
+    @test_throws ArgumentError GraphSearchDecoder(iters = 0)
+    @test_throws ArgumentError GraphSearchDecoder(l = 0)
+    @test_throws ArgumentError GraphSearchDecoder(lbar = -1)
+    @test_throws ArgumentError GraphSearchDecoder(s = -1)
+    @test_throws DimensionMismatch decode(GraphSearchDecoder(), c, zeros(5))
 end
 
 @testset "BP decoding" begin
