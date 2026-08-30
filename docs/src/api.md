@@ -50,6 +50,7 @@ RPADecoder
 BPDecoder
 GLPDecoder
 glp_permutations
+GraphSearchDecoder
 MLDecoder
 ```
 
