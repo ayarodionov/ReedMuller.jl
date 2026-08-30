@@ -62,6 +62,8 @@ end
         (RMCode(3, 6), PlotkinEncoder(), DumerShabunovDecoder(8, combine = :exact)),
         (RMCode(4, 4), PlotkinEncoder(), DumerShabunovDecoder(2)),
         (RMCode(0, 5), PlotkinEncoder(), DumerShabunovDecoder(1)),
+        (RMCode(2, 4), MatrixEncoder(RMCode(2, 4)), SidelnikovPershakovDecoder()),
+        (RMCode(2, 6), MatrixEncoder(RMCode(2, 6)), SidelnikovPershakovDecoder()),
     ]
     for (c, enc, dec) in cases
         for _ in 1:20
@@ -145,6 +147,36 @@ end
     end
 end
 
+@testset "Sidelnikov-Pershakov decoding" begin
+    rng = MersenneTwister(7)
+
+    # Guaranteed radius: any pattern of up to 2^(m-3) - 1 errors.
+    for m in (5, 6)
+        c = RMCode(2, m)
+        enc = MatrixEncoder(c)
+        t = (minimum_distance(c) - 1) ÷ 2
+        for _ in 1:30
+            msg = bitrand(rng, dimension(c))
+            y = encode(enc, c, msg)
+            y[randperm(rng, blocklength(c))[1:t]] .⊻= true
+            @test decode(SidelnikovPershakovDecoder(), c, hard_llr(y)) == msg
+        end
+    end
+
+    # Beyond half distance: corrects most random patterns of 1.5t errors.
+    c = RMCode(2, 7)
+    enc = MatrixEncoder(c)
+    t15 = 3 * (minimum_distance(c) ÷ 2) ÷ 2
+    ok = 0
+    for _ in 1:50
+        msg = bitrand(rng, dimension(c))
+        y = encode(enc, c, msg)
+        y[randperm(rng, blocklength(c))[1:t15]] .⊻= true
+        ok += decode(SidelnikovPershakovDecoder(), c, hard_llr(y)) == msg
+    end
+    @test ok >= 45
+end
+
 @testset "simulate" begin
     rng = MersenneTwister(5)
     c = RMCode(1, 5)
@@ -160,6 +192,7 @@ end
     @test_throws DimensionMismatch encode(PlotkinEncoder(), c, falses(3))
     @test_throws DimensionMismatch decode(DumerDecoder(), c, zeros(5))
     @test_throws ArgumentError decode(FHTDecoder(), c, zeros(16))
+    @test_throws ArgumentError decode(SidelnikovPershakovDecoder(), RMCode(1, 4), zeros(16))
     @test_throws ArgumentError DumerDecoder(combine = :magic)
     @test_throws ArgumentError DumerShabunovDecoder(0)
     @test_throws ArgumentError DumerShabunovDecoder(4, combine = :magic)

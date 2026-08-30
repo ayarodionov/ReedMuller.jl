@@ -49,6 +49,7 @@ mismatched bases.
 | `FHTDecoder` | decoder | soft, ML | `:monomial` | RM(1,m) only | O(n log n) |
 | `DumerDecoder` | decoder | soft | `:plotkin` | any RM(r,m) | O(n log n) |
 | `DumerShabunovDecoder` | decoder | soft, list | `:plotkin` | any RM(r,m) | O(L·n log n) |
+| `SidelnikovPershakovDecoder` | decoder | soft | `:monomial` | RM(2,m) only | O(n² log n) |
 
 ## Comparing algorithms
 
@@ -76,8 +77,7 @@ julia --project=. benchmarks/compare.jl
    a noiseless-roundtrip case in `test/runtests.jl` plus a pipeline in
    `benchmarks/compare.jl`.
 
-Candidates worth adding:
-Sidel'nikov-Pershakov / derivative decoding for RM(2,m), permutation
+Candidates worth adding: permutation
 (automorphism-group) decoding, Reed decoding with soft votes,
 successive-cancellation viewing RM as polar codes with a different
 frozen set, minimum-weight-parity-check ML for tiny codes.
@@ -98,5 +98,7 @@ julia --project=. -e 'using Pkg; Pkg.test()'
   Reed-Muller codes", IEEE Trans. Inf. Theory, 2004.
 * I. Dumer, K. Shabunov, "Soft-decision decoding of Reed-Muller
   codes: recursive lists", IEEE Trans. Inf. Theory, 2006.
+* V. M. Sidel'nikov, A. S. Pershakov, "Decoding of Reed-Muller codes
+  with a large number of errors", Probl. Inf. Transm., 1992.
 * E. Abbe, A. Shpilka, M. Ye, "Reed-Muller codes: theory and
   algorithms", IEEE Trans. Inf. Theory, 2021 (survey).

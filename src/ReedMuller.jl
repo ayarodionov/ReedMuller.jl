@@ -28,6 +28,7 @@ export AbstractEncoder, AbstractDecoder, encode, decode, basis
 export generator_matrix, monomials
 export MatrixEncoder, PlotkinEncoder
 export ReedDecoder, FHTDecoder, DumerDecoder, DumerShabunovDecoder
+export SidelnikovPershakovDecoder
 export BSC, BIAWGN, BIAWGN_from_ebn0, transmit, hard_llr
 export simulate, SimResult
 
@@ -38,6 +39,7 @@ include("decoders/reed.jl")
 include("decoders/fht.jl")
 include("decoders/dumer.jl")
 include("decoders/dumer_shabunov.jl")
+include("decoders/sidelnikov_pershakov.jl")
 include("channels.jl")
 include("simulate.jl")
 

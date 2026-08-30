@@ -13,6 +13,7 @@ const EBN0_DB = 0.0:1.0:5.0
 
 pipelines = [
     ("Reed majority-logic (hard)", MatrixEncoder(CODE), ReedDecoder()),
+    ("Sidelnikov-Pershakov",       MatrixEncoder(CODE), SidelnikovPershakovDecoder()),
     ("Dumer recursive, min-sum",   PlotkinEncoder(),    DumerDecoder()),
     ("Dumer recursive, exact",     PlotkinEncoder(),    DumerDecoder(combine = :exact)),
     ("Dumer-Shabunov list, L=4",   PlotkinEncoder(),    DumerShabunovDecoder(4)),
