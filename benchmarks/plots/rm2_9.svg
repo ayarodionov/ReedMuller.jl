@@ -58,11 +58,11 @@
 <circle cx="192.66666666666666" cy="124.38819875196859" r="4.5" fill="#4a3aa7"/>
 <circle cx="321.3333333333333" cy="211.79633242194137" r="4.5" fill="#4a3aa7"/>
 <circle cx="450.0" cy="354.80748830525573" r="4.5" fill="#4a3aa7"/>
-<path d="M64.0,45.4 L192.7,69.5 L321.3,111.2 L450.0,174.1" fill="none" stroke="#e34948" stroke-width="2.5"/>
-<circle cx="64.0" cy="45.4380899750901" r="4.5" fill="#e34948"/>
-<circle cx="192.66666666666666" cy="69.47076588402297" r="4.5" fill="#e34948"/>
-<circle cx="321.3333333333333" cy="111.16028017519476" r="4.5" fill="#e34948"/>
-<circle cx="450.0" cy="174.13028885472278" r="4.5" fill="#e34948"/>
+<path d="M64.0,100.8 L192.7,174.3 L321.3,278.8 L450.0,376.0" fill="none" stroke="#e34948" stroke-width="2.5"/>
+<circle cx="64.0" cy="100.80493186353462" r="4.5" fill="#e34948"/>
+<circle cx="192.66666666666666" cy="174.29668018526462" r="4.5" fill="#e34948"/>
+<circle cx="321.3333333333333" cy="278.8331285835029" r="4.5" fill="#e34948"/>
+<circle cx="450.0" cy="376.0" r="5" fill="#fcfcfb" stroke="#e34948" stroke-width="2.5"/>
 <circle cx="471" cy="36" r="5" fill="#2a78d6"/>
 <text x="482" y="40" font-size="12" fill="#0b0b0b">Reed (hard)</text>
 <circle cx="471" cy="56" r="5" fill="#eb6834"/>
@@ -78,7 +78,7 @@
 <circle cx="471" cy="156" r="5" fill="#4a3aa7"/>
 <text x="482" y="160" font-size="12" fill="#0b0b0b">GLP cyclic</text>
 <circle cx="471" cy="176" r="5" fill="#e34948"/>
-<text x="482" y="180" font-size="12" fill="#0b0b0b">GLP pairs (PmCr)</text>
+<text x="482" y="180" font-size="12" fill="#0b0b0b">Graph search N=32</text>
 <text x="466" y="200" font-size="10.5" fill="#52514e">○ = 0 errors observed</text>
 <text x="466" y="214" font-size="10.5" fill="#52514e">(floor shown at 1/trials)</text>
 </svg>

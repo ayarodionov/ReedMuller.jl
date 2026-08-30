@@ -25,7 +25,7 @@ const SERIES = [
     ("AED-8 / Dumer-FHT",     "#e87ba4"),
     ("DS16 FHT leaves",       "#008300"),
     ("GLP cyclic",            "#4a3aa7"),
-    ("GLP pairs (PmCr)",      "#e34948"),
+    ("Graph search N=32",     "#e34948"),
 ]
 
 const DATA = Dict(
@@ -37,7 +37,7 @@ const DATA = Dict(
         "AED-8 / Dumer-FHT"    => [2.63e-01, 6.93e-02, 7.76e-03, 2.50e-04],
         "DS16 FHT leaves"      => [2.75e-01, 8.41e-02, 1.34e-02, 8.60e-04],
         "GLP cyclic"           => [1.51e-01, 2.64e-02, 1.70e-03, 2.00e-05],
-        "GLP pairs (PmCr)"     => [3.25e-01, 1.17e-01, 2.26e-02, 2.07e-03],
+        "Graph search N=32"    => [1.20e-01, 1.89e-02, 1.10e-03, 1.00e-05],
     ),
     9 => Dict(
         "Reed (hard)"          => [1.00e+00, 1.00e+00, 1.00e+00, 1.00e+00],
@@ -47,7 +47,7 @@ const DATA = Dict(
         "AED-8 / Dumer-FHT"    => [4.14e-01, 1.29e-01, 1.55e-02, 6.50e-04],
         "DS16 FHT leaves"      => [4.73e-01, 2.00e-01, 4.80e-02, 5.37e-03],
         "GLP cyclic"           => [2.08e-01, 3.75e-02, 2.15e-03, 2.00e-05],
-        "GLP pairs (PmCr)"     => [4.96e-01, 2.26e-01, 5.78e-02, 7.37e-03],
+        "Graph search N=32"    => [8.11e-02, 7.33e-03, 2.40e-04, 0.00e+00],
     ),
     10 => Dict(
         "Reed (hard)"          => [1.00e+00, 1.00e+00, 1.00e+00, 1.00e+00],
@@ -57,7 +57,7 @@ const DATA = Dict(
         "AED-8 / Dumer-FHT"    => [6.75e-01, 3.14e-01, 5.99e-02, 2.76e-03],
         "DS16 FHT leaves"      => [7.27e-01, 4.39e-01, 1.61e-01, 3.15e-02],
         "GLP cyclic"           => [4.21e-01, 1.16e-01, 1.00e-02, 1.10e-04],
-        "GLP pairs (PmCr)"     => [7.26e-01, 4.42e-01, 1.68e-01, 3.17e-02],
+        "Graph search N=32"    => [1.26e-01, 1.58e-02, 7.70e-04, 0.00e+00],
     ),
 )
 
