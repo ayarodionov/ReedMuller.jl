@@ -44,6 +44,9 @@ mismatched bases.
 
 ## Implemented algorithms
 
+See [ALGORITHMS.md](ALGORITHMS.md) for a fuller description of each
+algorithm, its originating paper, and the file it's implemented in.
+
 | Algorithm | Type | Input | Basis | Scope | Complexity |
 |---|---|---|---|---|---|
 | `MatrixEncoder` | encoder | — | either | any RM(r,m) | O(nk) |
