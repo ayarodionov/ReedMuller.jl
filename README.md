@@ -53,12 +53,28 @@ mismatched bases.
 | `RPADecoder` | decoder | soft, near-ML | `:monomial` | r ≥ 1 (best r ≤ 3) | O(it·n² log n)/level |
 | `BPDecoder` | decoder | soft, iterative | `:monomial` | any RM(r,m) | O(it·Σ row wt) |
 | `MLDecoder` | decoder | soft, exact ML | either | k ≤ 24 | O(2^k·n) |
+| `GLPDecoder` | decoder | soft, list+perms | `:plotkin` | any RM(r,m) | O(L·n log n) |
 
 Options: `DumerDecoder`/`DumerShabunovDecoder` take `leaves = :fht` to
 terminate the recursion at first-order nodes with (list-)FHT decoding
 — the full Dumer-Shabunov construction, noticeably stronger;
 `SidelnikovPershakovDecoder` takes `voting = :majority` for Sakkour's
 simplified plain-majority variant.
+
+`GLPDecoder(code, L; perms)` is the global-list-with-permutations
+decoder after the `dtrm_glp` codec of
+[ecclab](https://github.com/kshabunov/ecclab): the Dumer-Shabunov
+list is seeded with one path per code-preserving variable permutation
+of the received word, and all paths then compete for the same `L`
+slots. `perms` takes ecclab's ensembles — `:identity` (`P1`,
+equivalent to plain Dumer-Shabunov), `:cyclic` (`Pcyclic`), `:pairs`
+(`PmCr`, every variable pair moved to the decided-first positions) —
+or an explicit list of variable permutations. Ecclab's decoders map
+to this package as: `dtrm0` ≈ `DumerDecoder()`, `dtrm1` ≈
+`DumerDecoder(leaves = :fht)`, `dtrm_glp` ≈ `GLPDecoder`, `rm1_ml` ≈
+`FHTDecoder`. Note: the ensembles pay off when `L` is well above the
+ensemble size (ecclab runs `PmCr` with L = 256 at m = 8-9); with a
+tight budget the shared list dilutes and plain Dumer-Shabunov can win.
 
 ### Generic wrappers
 
@@ -117,6 +133,9 @@ julia --project=. -e 'using Pkg; Pkg.test()'
   Reed-Muller codes", IEEE Trans. Inf. Theory, 2004.
 * I. Dumer, K. Shabunov, "Soft-decision decoding of Reed-Muller
   codes: recursive lists", IEEE Trans. Inf. Theory, 2006.
+* K. Shabunov, ecclab — recursive decoding simulation programs
+  (reference C implementations of dtrm0/dtrm1/dtrm_glp),
+  https://github.com/kshabunov/ecclab.
 * V. M. Sidel'nikov, A. S. Pershakov, "Decoding of Reed-Muller codes
   with a large number of errors", Probl. Inf. Transm., 1992.
 * B. Sakkour, "Decoding of second order Reed-Muller codes with a

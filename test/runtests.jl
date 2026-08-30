@@ -77,6 +77,8 @@ end
         (RMCode(2, 5), PlotkinEncoder(), GMDDecoder(RMCode(2, 5), DumerDecoder())),
         (RMCode(2, 4), MatrixEncoder(RMCode(2, 4)), MLDecoder(RMCode(2, 4))),
         (RMCode(2, 4), PlotkinEncoder(), MLDecoder(RMCode(2, 4); basis = :plotkin)),
+        (RMCode(2, 5), PlotkinEncoder(), GLPDecoder(RMCode(2, 5), 32; perms = :pairs)),
+        (RMCode(3, 6), PlotkinEncoder(), GLPDecoder(RMCode(3, 6), 16; perms = :cyclic)),
     ]
     for (c, enc, dec) in cases
         for _ in 1:20
@@ -282,6 +284,50 @@ end
     @test errs["aed"] < errs["dumer"]
     @test errs["gmd"] <= errs["dumer"]
     @test errs["chase"] < errs["reed"]
+end
+
+@testset "GLP decoding" begin
+    rng = MersenneTwister(14)
+
+    for m in (4, 6, 8)
+        @test glp_permutations(m, :identity) == [collect(1:m)]
+        cyc = glp_permutations(m, :cyclic)
+        @test length(cyc) == m && allunique(cyc)
+        prs = glp_permutations(m, :pairs)
+        @test length(prs) == binomial(m, 2)
+        @test prs[end] == collect(1:m)          # identity is the last pair
+        @test all(p -> sort(p) == collect(1:m), [cyc; prs])
+    end
+    @test_throws ArgumentError glp_permutations(4, :magic)
+
+    # With the identity ensemble GLP is exactly Dumer-Shabunov.
+    c = RMCode(2, 6)
+    enc = PlotkinEncoder()
+    ch = BIAWGN(1.0)
+    g1 = GLPDecoder(c, 16; perms = :identity, leaves = :bits)
+    ds = DumerShabunovDecoder(16, leaves = :bits)
+    for _ in 1:30
+        llr = transmit(rng, ch, encode(enc, c, bitrand(rng, dimension(c))))
+        @test decode(g1, c, llr) == decode(ds, c, llr)
+    end
+
+    # The shared-list ensemble clearly beats plain recursive decoding.
+    chn = ReedMuller.BIAWGN_from_ebn0(2.0, c)
+    glp = GLPDecoder(c, 24; perms = :cyclic)
+    e_glp = 0
+    e_dumer = 0
+    for _ in 1:200
+        msg = bitrand(rng, dimension(c))
+        llr = transmit(rng, chn, encode(enc, c, msg))
+        e_glp += decode(glp, c, llr) != msg
+        e_dumer += decode(DumerDecoder(leaves = :fht), c, llr) != msg
+    end
+    @test e_glp < e_dumer
+
+    @test_throws ArgumentError GLPDecoder(c, 4; perms = :pairs)     # L < ensemble
+    @test_throws ArgumentError GLPDecoder(c, 16; perms = [[1, 2, 2, 4, 5, 6]])
+    @test_throws ArgumentError GLPDecoder(c, 16; perms = Vector{Int}[])
+    @test_throws DimensionMismatch decode(GLPDecoder(c, 8; perms = :cyclic), c, zeros(5))
 end
 
 @testset "BP decoding" begin
