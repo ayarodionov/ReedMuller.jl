@@ -1,5 +1,8 @@
 # ReedMuller.jl
 
+[![CI](https://github.com/ayarodionov/ReedMuller.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/ayarodionov/ReedMuller.jl/actions/workflows/CI.yml)
+[![Docs](https://img.shields.io/badge/docs-stable-blue.svg)](https://ayarodionov.github.io/ReedMuller.jl/)
+
 A common place — and a common language — for Reed-Muller encoding and
 decoding algorithms in Julia. The goal is to collect as many
 implementations as possible behind one interface so they can be

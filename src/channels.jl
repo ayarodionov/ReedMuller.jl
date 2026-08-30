@@ -1,5 +1,13 @@
-# Channel models. `transmit(rng, ch, codeword)` returns the LLR vector
-# seen by the decoder (positive = bit 0 more likely).
+# Channel models.
+
+"""
+    transmit(rng::AbstractRNG, ch, codeword::BitVector) -> Vector{Float64}
+
+Pass `codeword` through channel `ch` (a [`BSC`](@ref) or
+[`BIAWGN`](@ref)) and return the resulting log-likelihood ratios
+(positive = bit 0 more likely), ready for any [`AbstractDecoder`](@ref).
+"""
+function transmit end
 
 """
     BSC(p)
