@@ -50,6 +50,25 @@ mismatched bases.
 | `DumerDecoder` | decoder | soft | `:plotkin` | any RM(r,m) | O(n log n) |
 | `DumerShabunovDecoder` | decoder | soft, list | `:plotkin` | any RM(r,m) | O(L·n log n) |
 | `SidelnikovPershakovDecoder` | decoder | soft | `:monomial` | RM(2,m) only | O(n² log n) |
+| `RPADecoder` | decoder | soft, near-ML | `:monomial` | r ≥ 1 (best r ≤ 3) | O(it·n² log n)/level |
+| `BPDecoder` | decoder | soft, iterative | `:monomial` | any RM(r,m) | O(it·Σ row wt) |
+| `MLDecoder` | decoder | soft, exact ML | either | k ≤ 24 | O(2^k·n) |
+
+Options: `DumerDecoder`/`DumerShabunovDecoder` take `leaves = :fht` to
+terminate the recursion at first-order nodes with (list-)FHT decoding
+— the full Dumer-Shabunov construction, noticeably stronger;
+`SidelnikovPershakovDecoder` takes `voting = :majority` for Sakkour's
+simplified plain-majority variant.
+
+### Generic wrappers
+
+These compose with *any* decoder through the common interface:
+
+| Wrapper | Idea | Cost |
+|---|---|---|
+| `AutomorphismEnsembleDecoder(code, inner; size)` | decode `size` permuted received words (automorphism group GA(m)), keep best by correlation | size × inner |
+| `ChaseDecoder(code, inner; t)` | try all 2^t sign flips of the t least reliable positions | 2^t × inner |
+| `GMDDecoder(code, inner)` | erase 0, 2, 4, … least reliable positions, keep best | (d+1)/2 × inner |
 
 ## Comparing algorithms
 
@@ -77,10 +96,10 @@ julia --project=. benchmarks/compare.jl
    a noiseless-roundtrip case in `test/runtests.jl` plus a pipeline in
    `benchmarks/compare.jl`.
 
-Candidates worth adding: permutation
-(automorphism-group) decoding, Reed decoding with soft votes,
-successive-cancellation viewing RM as polar codes with a different
-frozen set, minimum-weight-parity-check ML for tiny codes.
+Candidates worth adding: Kabatiansky-Tavernier (and Fourquet-Tavernier)
+deterministic list decoding of RM(2,m), sparse/multi-decoder RPA and
+the hardware-oriented IPA variant, Reed decoding with soft votes,
+Sidel'nikov-Pershakov with candidate lists per derivative.
 
 ## Running the tests
 
@@ -100,5 +119,16 @@ julia --project=. -e 'using Pkg; Pkg.test()'
   codes: recursive lists", IEEE Trans. Inf. Theory, 2006.
 * V. M. Sidel'nikov, A. S. Pershakov, "Decoding of Reed-Muller codes
   with a large number of errors", Probl. Inf. Transm., 1992.
+* B. Sakkour, "Decoding of second order Reed-Muller codes with a
+  large number of errors", IEEE ITW, 2005.
+* M. Ye, E. Abbe, "Recursive projection-aggregation decoding of
+  Reed-Muller codes", IEEE Trans. Inf. Theory, 2020.
+* M. Geiselhart, A. Elkelesh, M. Ebada, S. Cammerer, S. ten Brink,
+  "Automorphism ensemble decoding of Reed-Muller codes", IEEE Trans.
+  Commun., 2021.
+* D. Chase, "A class of algorithms for decoding block codes with
+  channel measurement information", IEEE Trans. Inf. Theory, 1972.
+* G. D. Forney, "Generalized minimum distance decoding", IEEE Trans.
+  Inf. Theory, 1966.
 * E. Abbe, A. Shpilka, M. Ye, "Reed-Muller codes: theory and
   algorithms", IEEE Trans. Inf. Theory, 2021 (survey).

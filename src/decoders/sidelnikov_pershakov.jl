@@ -1,5 +1,5 @@
 """
-    SidelnikovPershakovDecoder()
+    SidelnikovPershakovDecoder(; voting = :weighted)
 
 Sidel'nikov-Pershakov derivative decoding for second-order codes
 RM(2, m) (Sidel'nikov & Pershakov, "Decoding of Reed-Muller codes
@@ -18,15 +18,28 @@ so its derivative in any direction b, D_b f(x) = f(x) ⊕ f(x ⊕ b) =
  3. Peels the recovered quadratic part off the channel LLRs and
     FHT-decodes the residual RM(1, m) for the affine part.
 
+`voting` selects the vote combination in step 2: `:weighted` scales
+each vote by the reliability of its less reliable member, `:majority`
+counts every vote equally — the simplified plain-majority voting of
+Sakkour's variant of the algorithm (Sakkour, "Decoding of second
+order Reed-Muller codes with a large number of errors", ITW 2005).
+
 Corrects any pattern of up to ⌊(d-1)/2⌋ = 2^(m-3) - 1 errors and, on
 random errors, most patterns well beyond half the minimum distance.
 Complexity O(n² log n). Message convention: `:monomial`.
 """
-struct SidelnikovPershakovDecoder <: AbstractDecoder end
+struct SidelnikovPershakovDecoder <: AbstractDecoder
+    voting::Symbol
+    function SidelnikovPershakovDecoder(; voting::Symbol = :weighted)
+        voting in (:weighted, :majority) ||
+            throw(ArgumentError("voting must be :weighted or :majority, got $voting"))
+        new(voting)
+    end
+end
 
 basis(::SidelnikovPershakovDecoder) = :monomial
 
-function decode(::SidelnikovPershakovDecoder, code::RMCode, llr::AbstractVector{<:Real})
+function decode(dec::SidelnikovPershakovDecoder, code::RMCode, llr::AbstractVector{<:Real})
     code.r == 2 || throw(ArgumentError("SidelnikovPershakovDecoder only handles RM(2, m), got $code"))
     n = blocklength(code)
     length(llr) == n || throw(DimensionMismatch("expected $n LLRs, got $(length(llr))"))
@@ -58,7 +71,7 @@ function decode(::SidelnikovPershakovDecoder, code::RMCode, llr::AbstractVector{
         for b in 0:(n - 1)
             b & ei == 0 || continue
             est = linmask[b + 1] ⊻ linmask[(b ⊻ ei) + 1]
-            w = min(peak[b + 1], peak[(b ⊻ ei) + 1])
+            w = dec.voting === :weighted ? min(peak[b + 1], peak[(b ⊻ ei) + 1]) : 1.0
             for j in 1:m
                 j == i && continue
                 votes[i, j] += (est >> (j - 1)) & 1 == 1 ? w : -w

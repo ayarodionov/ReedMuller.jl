@@ -15,18 +15,28 @@ leaf LLRs that the path's decisions contradict. After each branching
 the list is pruned back to the `L` best paths; the best final path is
 returned.
 
-`L = 1` reduces to plain recursive (Dumer) decoding; growing `L`
-approaches maximum-likelihood performance at cost O(L·n·log n).
-Message convention: `:plotkin`.
+With `leaves = :fht` the recursion instead terminates at first-order
+nodes, where every path is expanded into the full list of affine
+codewords scored by their exact correlation with the node LLRs (the
+list-FHT termination of the original paper). `leaves = :bits`
+(default) recurses down to repetition/single-bit leaves.
+
+`L = 1` with `:bits` leaves reduces to plain recursive (Dumer)
+decoding; growing `L` approaches maximum-likelihood performance at
+cost O(L·n·log n). Message convention: `:plotkin`.
 """
 struct DumerShabunovDecoder <: AbstractDecoder
     L::Int
     combine::Symbol
-    function DumerShabunovDecoder(L::Integer = 8; combine::Symbol = :minsum)
+    leaves::Symbol
+    function DumerShabunovDecoder(L::Integer = 8; combine::Symbol = :minsum,
+                                  leaves::Symbol = :bits)
         L >= 1 || throw(ArgumentError("list size must be >= 1, got $L"))
         combine in (:minsum, :exact) ||
             throw(ArgumentError("combine must be :minsum or :exact, got $combine"))
-        new(L, combine)
+        leaves in (:bits, :fht) ||
+            throw(ArgumentError("leaves must be :bits or :fht, got $leaves"))
+        new(L, combine, leaves)
     end
 end
 
@@ -53,11 +63,12 @@ function decode(dec::DumerShabunovDecoder, code::RMCode, llr::AbstractVector{<:R
     n = blocklength(code)
     length(llr) == n || throw(DimensionMismatch("expected $n LLRs, got $(length(llr))"))
     start = _LSPath(0.0, Vector{Float64}(llr), 1)
-    results = _ls_node([start], code.r, code.m, dec.L, dec.combine)
+    results = _ls_node([start], code.r, code.m, dec)
     results[argmin([p.metric for p in results])].msg
 end
 
-function _ls_node(paths::Vector{_LSPath}, r::Int, m::Int, L::Int, combine::Symbol)
+function _ls_node(paths::Vector{_LSPath}, r::Int, m::Int, dec::DumerShabunovDecoder)
+    L = dec.L
     # Leaf: repetition code (covers the single-position node m = 0).
     # One information bit; every path branches into both hypotheses,
     # paying the magnitude of each disagreeing LLR.
@@ -76,15 +87,35 @@ function _ls_node(paths::Vector{_LSPath}, r::Int, m::Int, L::Int, combine::Symbo
         return _ls_prune(out, L)
     end
 
+    # List-FHT leaf: expand each path into every affine codeword of
+    # RM(1, m), with the exact penalty (Σ|LLR| - correlation)/2 read
+    # off the path's Hadamard spectrum; keep the L best overall.
+    # (The r = 1 :plotkin message equals the monomial coefficients.)
+    if r == 1 && dec.leaves === :fht
+        cands = Tuple{Float64, Int, Bool, Int}[]     # metric, j, a0, tag
+        for p in paths
+            s1 = sum(abs, p.llr)
+            w = copy(p.llr)
+            _fwht!(w)
+            for j in 0:(length(w) - 1)
+                push!(cands, (p.metric + (s1 - w[j + 1]) / 2, j, false, p.tag))
+                push!(cands, (p.metric + (s1 + w[j + 1]) / 2, j, true, p.tag))
+            end
+        end
+        keep = length(cands) <= L ? cands : partialsort(cands, 1:L; by = first)
+        return [_LSResult(met, _affine_msg(j, a0, m), _affine_cw(j, a0, m), tag)
+                for (met, j, a0, tag) in keep]
+    end
+
     half = 1 << (m - 1)
 
     # v phase: every path descends into RM(r-1, m-1) with combined LLRs.
     vpaths = Vector{_LSPath}(undef, length(paths))
     for (i, p) in enumerate(paths)
-        Lv = [_combine(combine, p.llr[j], p.llr[half + j]) for j in 1:half]
+        Lv = [_combine(dec.combine, p.llr[j], p.llr[half + j]) for j in 1:half]
         vpaths[i] = _LSPath(p.metric, Lv, i)
     end
-    vres = _ls_node(vpaths, r - 1, m - 1, L, combine)
+    vres = _ls_node(vpaths, r - 1, m - 1, dec)
 
     # u phase: each surviving v-hypothesis descends into RM(min(r, m-1), m-1)
     # with its v-corrected LLRs.
@@ -94,7 +125,7 @@ function _ls_node(paths::Vector{_LSPath}, r::Int, m::Int, L::Int, combine::Symbo
         Lu = [pl[i] + (v.cw[i] ? -pl[half + i] : pl[half + i]) for i in 1:half]
         upaths[j] = _LSPath(v.metric, Lu, j)
     end
-    ures = _ls_node(upaths, min(r, m - 1), m - 1, L, combine)
+    ures = _ls_node(upaths, min(r, m - 1), m - 1, dec)
 
     out = Vector{_LSResult}(undef, length(ures))
     for (idx, u) in enumerate(ures)

@@ -12,14 +12,22 @@ rate-1 codes (r = m) by symbol-wise hard decision.
 `:minsum` (sign-min approximation, the usual practical choice) or
 `:exact` (2·atanh(tanh·tanh), true LLR combining).
 
+`leaves = :fht` stops the recursion at first-order nodes and decodes
+them optimally with the fast Hadamard transform instead of recursing
+down to single bits (the stronger termination Dumer recommends);
+`:bits` (default) recurses all the way down.
+
 Complexity O(n log n). Message convention: `:plotkin`.
 """
 struct DumerDecoder <: AbstractDecoder
     combine::Symbol
-    function DumerDecoder(; combine::Symbol = :minsum)
+    leaves::Symbol
+    function DumerDecoder(; combine::Symbol = :minsum, leaves::Symbol = :bits)
         combine in (:minsum, :exact) ||
             throw(ArgumentError("combine must be :minsum or :exact, got $combine"))
-        new(combine)
+        leaves in (:bits, :fht) ||
+            throw(ArgumentError("leaves must be :bits or :fht, got $leaves"))
+        new(combine, leaves)
     end
 end
 
@@ -37,6 +45,13 @@ function _dumer(dec::DumerDecoder, llr::Vector{Float64}, r::Int, m::Int)
     if r == 0
         bit = sum(llr) < 0
         return BitVector([bit]), (bit ? trues(1 << m) : falses(1 << m))
+    end
+    # For r = 1 the :plotkin message of RM(1, m) coincides with the
+    # monomial coefficient vector [a₀, a₁, …, a_m] (the v-bit of the
+    # (u, u+v) split is exactly the coefficient of the top variable),
+    # so the FHT result can be returned as is.
+    if r == 1 && dec.leaves === :fht
+        return _fht_ml(llr, m)
     end
     if r == m
         cw = BitVector(llr .< 0)

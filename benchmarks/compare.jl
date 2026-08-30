@@ -13,11 +13,19 @@ const EBN0_DB = 0.0:1.0:5.0
 
 pipelines = [
     ("Reed majority-logic (hard)", MatrixEncoder(CODE), ReedDecoder()),
+    ("Chase-II(16) over Reed",     MatrixEncoder(CODE), ChaseDecoder(CODE, ReedDecoder(); t = 4)),
+    ("BP, redundant dual checks",  MatrixEncoder(CODE), BPDecoder(CODE)),
     ("Sidelnikov-Pershakov",       MatrixEncoder(CODE), SidelnikovPershakovDecoder()),
+    ("SP, majority (Sakkour)",     MatrixEncoder(CODE), SidelnikovPershakovDecoder(voting = :majority)),
+    ("RPA",                        MatrixEncoder(CODE), RPADecoder()),
     ("Dumer recursive, min-sum",   PlotkinEncoder(),    DumerDecoder()),
-    ("Dumer recursive, exact",     PlotkinEncoder(),    DumerDecoder(combine = :exact)),
-    ("Dumer-Shabunov list, L=4",   PlotkinEncoder(),    DumerShabunovDecoder(4)),
+    ("Dumer recursive, FHT leaves", PlotkinEncoder(),   DumerDecoder(leaves = :fht)),
+    ("GMD over Dumer-FHT",         PlotkinEncoder(),    GMDDecoder(CODE, DumerDecoder(leaves = :fht))),
+    ("AED-8 over Dumer-FHT",       PlotkinEncoder(),
+     AutomorphismEnsembleDecoder(CODE, DumerDecoder(leaves = :fht);
+                                 size = 8, rng = MersenneTwister(1))),
     ("Dumer-Shabunov list, L=16",  PlotkinEncoder(),    DumerShabunovDecoder(16)),
+    ("D-S list L=16, FHT leaves",  PlotkinEncoder(),    DumerShabunovDecoder(16, leaves = :fht)),
 ]
 
 println("Code: $CODE, BI-AWGN, $TRIALS trials per point\n")

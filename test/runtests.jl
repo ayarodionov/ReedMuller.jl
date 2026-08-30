@@ -64,6 +64,19 @@ end
         (RMCode(0, 5), PlotkinEncoder(), DumerShabunovDecoder(1)),
         (RMCode(2, 4), MatrixEncoder(RMCode(2, 4)), SidelnikovPershakovDecoder()),
         (RMCode(2, 6), MatrixEncoder(RMCode(2, 6)), SidelnikovPershakovDecoder()),
+        (RMCode(2, 6), MatrixEncoder(RMCode(2, 6)), SidelnikovPershakovDecoder(voting = :majority)),
+        (RMCode(2, 5), PlotkinEncoder(), DumerDecoder(leaves = :fht)),
+        (RMCode(3, 6), PlotkinEncoder(), DumerShabunovDecoder(4, leaves = :fht)),
+        (RMCode(2, 5), MatrixEncoder(RMCode(2, 5)), RPADecoder()),
+        (RMCode(3, 5), MatrixEncoder(RMCode(3, 5)), RPADecoder()),
+        (RMCode(2, 5), MatrixEncoder(RMCode(2, 5)), BPDecoder(RMCode(2, 5))),
+        (RMCode(2, 5), PlotkinEncoder(),
+         AutomorphismEnsembleDecoder(RMCode(2, 5), DumerDecoder(); size = 4,
+                                     rng = MersenneTwister(11))),
+        (RMCode(2, 5), MatrixEncoder(RMCode(2, 5)), ChaseDecoder(RMCode(2, 5), ReedDecoder())),
+        (RMCode(2, 5), PlotkinEncoder(), GMDDecoder(RMCode(2, 5), DumerDecoder())),
+        (RMCode(2, 4), MatrixEncoder(RMCode(2, 4)), MLDecoder(RMCode(2, 4))),
+        (RMCode(2, 4), PlotkinEncoder(), MLDecoder(RMCode(2, 4); basis = :plotkin)),
     ]
     for (c, enc, dec) in cases
         for _ in 1:20
@@ -177,6 +190,117 @@ end
     @test ok >= 45
 end
 
+@testset "MLDecoder is the reference" begin
+    rng = MersenneTwister(8)
+    c = RMCode(1, 4)
+    enc = MatrixEncoder(c)
+    ml = MLDecoder(c)
+    for _ in 1:30
+        llr = transmit(rng, BIAWGN(1.0), encode(enc, c, bitrand(rng, dimension(c))))
+        @test decode(ml, c, llr) == decode(FHTDecoder(), c, llr)
+    end
+end
+
+@testset "FHT leaves" begin
+    rng = MersenneTwister(9)
+    c = RMCode(2, 6)
+    enc = PlotkinEncoder()
+    ch = BIAWGN(0.95)
+    errs_bits = 0
+    errs_fht = 0
+    for _ in 1:300
+        msg = bitrand(rng, dimension(c))
+        llr = transmit(rng, ch, encode(enc, c, msg))
+        errs_bits += decode(DumerDecoder(), c, llr) != msg
+        errs_fht += decode(DumerDecoder(leaves = :fht), c, llr) != msg
+    end
+    @test errs_fht < errs_bits
+
+    # With the list covering the whole code, :fht leaves are exact ML
+    # (the r = 1 top node enumerates every affine codeword exactly).
+    small = RMCode(1, 3)
+    k = dimension(small)
+    ml = MLDecoder(small; basis = :plotkin)
+    dec = DumerShabunovDecoder(2^k, leaves = :fht)
+    for _ in 1:30
+        llr = transmit(rng, BIAWGN(1.2), encode(enc, small, bitrand(rng, k)))
+        @test decode(dec, small, llr) == decode(ml, small, llr)
+    end
+end
+
+@testset "RPA decoding" begin
+    rng = MersenneTwister(10)
+    c = RMCode(2, 6)
+    enc = MatrixEncoder(c)
+    # Corrects every tried pattern at half distance.
+    t = (minimum_distance(c) - 1) ÷ 2
+    for _ in 1:20
+        msg = bitrand(rng, dimension(c))
+        y = encode(enc, c, msg)
+        y[randperm(rng, blocklength(c))[1:t]] .⊻= true
+        @test decode(RPADecoder(), c, hard_llr(y)) == msg
+    end
+    # Near-ML: clearly better than one-pass derivative decoding.
+    ch = ReedMuller.BIAWGN_from_ebn0(1.5, c)
+    errs_rpa = 0
+    errs_sp = 0
+    for _ in 1:200
+        msg = bitrand(rng, dimension(c))
+        llr = transmit(rng, ch, encode(enc, c, msg))
+        errs_rpa += decode(RPADecoder(), c, llr) != msg
+        errs_sp += decode(SidelnikovPershakovDecoder(), c, llr) != msg
+    end
+    @test errs_rpa < errs_sp
+end
+
+@testset "ensemble and trial wrappers" begin
+    rng = MersenneTwister(12)
+    c = RMCode(2, 6)
+
+    inner = DumerDecoder(leaves = :fht)
+    aed = AutomorphismEnsembleDecoder(c, inner; size = 8, rng)
+    @test basis(aed) === :plotkin
+    chase = ChaseDecoder(c, ReedDecoder(); t = 4)
+    @test basis(chase) === :monomial
+    gmd = GMDDecoder(c, inner)
+
+    pe, me = PlotkinEncoder(), MatrixEncoder(c)
+    ch = ReedMuller.BIAWGN_from_ebn0(2.0, c)
+    errs = Dict{String, Int}("dumer" => 0, "aed" => 0, "gmd" => 0,
+                             "reed" => 0, "chase" => 0)
+    for _ in 1:300
+        msg = bitrand(rng, dimension(c))
+        cwp, cwm = encode(pe, c, msg), encode(me, c, msg)
+        llrp = transmit(rng, ch, cwp)
+        llrm = transmit(rng, ch, cwm)
+        errs["dumer"] += decode(inner, c, llrp) != msg
+        errs["aed"] += decode(aed, c, llrp) != msg
+        errs["gmd"] += decode(gmd, c, llrp) != msg
+        errs["reed"] += decode(ReedDecoder(), c, llrm) != msg
+        errs["chase"] += decode(chase, c, llrm) != msg
+    end
+    @test errs["aed"] < errs["dumer"]
+    @test errs["gmd"] <= errs["dumer"]
+    @test errs["chase"] < errs["reed"]
+end
+
+@testset "BP decoding" begin
+    rng = MersenneTwister(13)
+    c = RMCode(2, 5)
+    enc = MatrixEncoder(c)
+    for _ in 1:20
+        msg = bitrand(rng, dimension(c))
+        y = encode(enc, c, msg)
+        y[rand(rng, 1:blocklength(c))] ⊻= true
+        @test decode(BPDecoder(c), c, hard_llr(y)) == msg
+    end
+    # Rate-1 code has an empty dual: BP reduces to hard decision.
+    full = RMCode(4, 4)
+    msg = bitrand(rng, dimension(full))
+    cw = encode(MatrixEncoder(full), full, msg)
+    @test decode(BPDecoder(full), full, hard_llr(cw)) == msg
+end
+
 @testset "simulate" begin
     rng = MersenneTwister(5)
     c = RMCode(1, 5)
@@ -196,6 +320,14 @@ end
     @test_throws ArgumentError DumerDecoder(combine = :magic)
     @test_throws ArgumentError DumerShabunovDecoder(0)
     @test_throws ArgumentError DumerShabunovDecoder(4, combine = :magic)
+    @test_throws ArgumentError DumerDecoder(leaves = :magic)
+    @test_throws ArgumentError DumerShabunovDecoder(4, leaves = :magic)
+    @test_throws ArgumentError SidelnikovPershakovDecoder(voting = :magic)
+    @test_throws ArgumentError RPADecoder(iters = -1)
+    @test_throws ArgumentError BPDecoder(c; iters = 0)
+    @test_throws ArgumentError AutomorphismEnsembleDecoder(c, DumerDecoder(); size = 0)
+    @test_throws ArgumentError ChaseDecoder(c, ReedDecoder(); t = 25)
+    @test_throws ArgumentError MLDecoder(RMCode(3, 7))
     @test_throws ArgumentError BSC(0.7)
     @test_throws ArgumentError BIAWGN(0.0)
 end
