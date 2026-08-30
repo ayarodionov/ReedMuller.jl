@@ -108,9 +108,10 @@ julia --project=. benchmarks/compare.jl
 ```
 
 For a larger-scale, longer-running comparison at RM(2,8), RM(2,9), and
-RM(2,10) (100,000 trials/point, all decoders including the generic
-wrappers), see [benchmarks/RESULTS.md](benchmarks/RESULTS.md) — it
-includes WER charts and the reproduction commands.
+RM(2,10) (100,000 trials/point, every decoder in the package including
+the generic wrappers), see [benchmarks/RESULTS.md](benchmarks/RESULTS.md)
+— it includes WER charts, the full data tables, and the reproduction
+commands.
 
 ## Adding a new algorithm
 
