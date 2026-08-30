@@ -15,6 +15,8 @@ pipelines = [
     ("Reed majority-logic (hard)", MatrixEncoder(CODE), ReedDecoder()),
     ("Dumer recursive, min-sum",   PlotkinEncoder(),    DumerDecoder()),
     ("Dumer recursive, exact",     PlotkinEncoder(),    DumerDecoder(combine = :exact)),
+    ("Dumer-Shabunov list, L=4",   PlotkinEncoder(),    DumerShabunovDecoder(4)),
+    ("Dumer-Shabunov list, L=16",  PlotkinEncoder(),    DumerShabunovDecoder(16)),
 ]
 
 println("Code: $CODE, BI-AWGN, $TRIALS trials per point\n")

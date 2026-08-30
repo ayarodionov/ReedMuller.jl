@@ -46,7 +46,7 @@ function _dumer(dec::DumerDecoder, llr::Vector{Float64}, r::Int, m::Int)
     L = @view llr[1:half]
     R = @view llr[(half + 1):end]
 
-    Lv = [_combine(dec, L[i], R[i]) for i in 1:half]
+    Lv = [_combine(dec.combine, L[i], R[i]) for i in 1:half]
     mv, v = _dumer(dec, Lv, r - 1, m - 1)
 
     Lu = [L[i] + (v[i] ? -R[i] : R[i]) for i in 1:half]
@@ -55,9 +55,10 @@ function _dumer(dec::DumerDecoder, llr::Vector{Float64}, r::Int, m::Int)
     vcat(mu, mv), vcat(u, u .⊻ v)
 end
 
-_combine(dec::DumerDecoder, a::Float64, b::Float64) =
-    dec.combine === :minsum ? sign(a) * sign(b) * min(abs(a), abs(b)) :
-                              2 * atanh(clamp(tanh(a / 2) * tanh(b / 2), -1 + 1e-15, 1 - 1e-15))
+# Check-node LLR combining rule, shared with DumerShabunovDecoder.
+_combine(combine::Symbol, a::Float64, b::Float64) =
+    combine === :minsum ? sign(a) * sign(b) * min(abs(a), abs(b)) :
+                          2 * atanh(clamp(tanh(a / 2) * tanh(b / 2), -1 + 1e-15, 1 - 1e-15))
 
 # Rate-1 node: recover the plotkin-basis message from a full-space
 # codeword of RM(m, m) by unwinding u = left, v = left ⊻ right.

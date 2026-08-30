@@ -27,7 +27,7 @@ export RMCode, blocklength, dimension, minimum_distance, rate
 export AbstractEncoder, AbstractDecoder, encode, decode, basis
 export generator_matrix, monomials
 export MatrixEncoder, PlotkinEncoder
-export ReedDecoder, FHTDecoder, DumerDecoder
+export ReedDecoder, FHTDecoder, DumerDecoder, DumerShabunovDecoder
 export BSC, BIAWGN, BIAWGN_from_ebn0, transmit, hard_llr
 export simulate, SimResult
 
@@ -37,6 +37,7 @@ include("encoders.jl")
 include("decoders/reed.jl")
 include("decoders/fht.jl")
 include("decoders/dumer.jl")
+include("decoders/dumer_shabunov.jl")
 include("channels.jl")
 include("simulate.jl")
 

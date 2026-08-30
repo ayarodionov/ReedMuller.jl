@@ -48,6 +48,7 @@ mismatched bases.
 | `ReedDecoder` | decoder | hard | `:monomial` | any RM(r,m) | O(nk) |
 | `FHTDecoder` | decoder | soft, ML | `:monomial` | RM(1,m) only | O(n log n) |
 | `DumerDecoder` | decoder | soft | `:plotkin` | any RM(r,m) | O(n log n) |
+| `DumerShabunovDecoder` | decoder | soft, list | `:plotkin` | any RM(r,m) | O(L·n log n) |
 
 ## Comparing algorithms
 
@@ -75,7 +76,7 @@ julia --project=. benchmarks/compare.jl
    a noiseless-roundtrip case in `test/runtests.jl` plus a pipeline in
    `benchmarks/compare.jl`.
 
-Candidates worth adding: Dumer-Shabunov recursive **list** decoding,
+Candidates worth adding:
 Sidel'nikov-Pershakov / derivative decoding for RM(2,m), permutation
 (automorphism-group) decoding, Reed decoding with soft votes,
 successive-cancellation viewing RM as polar codes with a different
@@ -95,5 +96,7 @@ julia --project=. -e 'using Pkg; Pkg.test()'
   Summary, 1966 (FHT decoding of first-order codes).
 * I. Dumer, "Recursive decoding and its performance for low-rate
   Reed-Muller codes", IEEE Trans. Inf. Theory, 2004.
+* I. Dumer, K. Shabunov, "Soft-decision decoding of Reed-Muller
+  codes: recursive lists", IEEE Trans. Inf. Theory, 2006.
 * E. Abbe, A. Shpilka, M. Ye, "Reed-Muller codes: theory and
   algorithms", IEEE Trans. Inf. Theory, 2021 (survey).

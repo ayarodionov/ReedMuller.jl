@@ -58,6 +58,10 @@ end
         (RMCode(3, 6), PlotkinEncoder(), DumerDecoder(combine = :exact)),
         (RMCode(4, 4), PlotkinEncoder(), DumerDecoder()),
         (RMCode(0, 5), PlotkinEncoder(), DumerDecoder()),
+        (RMCode(2, 5), PlotkinEncoder(), DumerShabunovDecoder(4)),
+        (RMCode(3, 6), PlotkinEncoder(), DumerShabunovDecoder(8, combine = :exact)),
+        (RMCode(4, 4), PlotkinEncoder(), DumerShabunovDecoder(2)),
+        (RMCode(0, 5), PlotkinEncoder(), DumerShabunovDecoder(1)),
     ]
     for (c, enc, dec) in cases
         for _ in 1:20
@@ -103,6 +107,44 @@ end
     end
 end
 
+@testset "Dumer-Shabunov list decoding" begin
+    rng = MersenneTwister(6)
+    c = RMCode(2, 5)
+    enc = PlotkinEncoder()
+    ch = BIAWGN(0.9)
+
+    # With L = 1 the list decoder must agree with plain Dumer decoding.
+    for _ in 1:50
+        llr = transmit(rng, ch, encode(enc, c, bitrand(rng, dimension(c))))
+        @test decode(DumerShabunovDecoder(1), c, llr) == decode(DumerDecoder(), c, llr)
+    end
+
+    # A larger list must beat plain Dumer over a noisy batch.
+    errs = Dict(1 => 0, 16 => 0)
+    for _ in 1:300
+        msg = bitrand(rng, dimension(c))
+        llr = transmit(rng, ch, encode(enc, c, msg))
+        for L in (1, 16)
+            errs[L] += decode(DumerShabunovDecoder(L), c, llr) != msg
+        end
+    end
+    @test errs[16] < errs[1]
+
+    # With the list covering the whole codebook, decoding is exact ML
+    # by correlation on a small code.
+    small = RMCode(1, 3)                # k = 4, 16 codewords
+    k, n = dimension(small), blocklength(small)
+    codebook = [encode(enc, small, BitVector(digits(Bool, w, base = 2, pad = k)))
+                for w in 0:(2^k - 1)]
+    dec = DumerShabunovDecoder(2^k)
+    for _ in 1:50
+        llr = transmit(rng, BIAWGN(1.2), encode(enc, small, bitrand(rng, k)))
+        est_cw = encode(enc, small, decode(dec, small, llr))
+        score(cw) = sum(llr[i] * (cw[i] ? -1.0 : 1.0) for i in 1:n)
+        @test score(est_cw) ≈ maximum(score, codebook)
+    end
+end
+
 @testset "simulate" begin
     rng = MersenneTwister(5)
     c = RMCode(1, 5)
@@ -119,6 +161,8 @@ end
     @test_throws DimensionMismatch decode(DumerDecoder(), c, zeros(5))
     @test_throws ArgumentError decode(FHTDecoder(), c, zeros(16))
     @test_throws ArgumentError DumerDecoder(combine = :magic)
+    @test_throws ArgumentError DumerShabunovDecoder(0)
+    @test_throws ArgumentError DumerShabunovDecoder(4, combine = :magic)
     @test_throws ArgumentError BSC(0.7)
     @test_throws ArgumentError BIAWGN(0.0)
 end
