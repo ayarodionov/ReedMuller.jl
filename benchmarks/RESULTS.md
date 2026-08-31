@@ -157,6 +157,13 @@ exclude JIT compilation. Unlike the error-rate runs this uses one
 thread deliberately — timing wants one decode's true cost, not
 throughput under contention.
 
+**Hardware:** Apple M4 (4 performance + 6 efficiency cores), 16 GB
+RAM, macOS 15.6, Julia 1.12.7. These are single-core wall-clock times
+on one specific machine — treat the absolute milliseconds as
+approximate and the *ratios between decoders* (which is what the
+observations below rely on) as the portion that should reproduce
+elsewhere.
+
 | Decoder (ms/decode) | RM(2,8) | RM(2,9) | RM(2,10) |
 |---|---|---|---|
 | Reed (hard) | 0.052 | 0.130 | 0.319 |
