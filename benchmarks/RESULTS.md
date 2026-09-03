@@ -33,6 +33,18 @@ piece.
   `DumerShabunovDecoder(16, leaves=:fht)`, `GLPDecoder` (`:cyclic` and
   `:pairs`/PmCr ensembles), `GraphSearchDecoder(iters=32)`. See
   [ALGORITHMS.md](../ALGORITHMS.md) for what each of these does.
+- **Table labels for the generic wrappers** name the wrapper, its
+  parameter, and the constituent decoder it wraps, separated by a
+  slash: **`AED-8/Dumer-FHT`** is
+  `AutomorphismEnsembleDecoder(DumerDecoder(leaves=:fht); size=8)` —
+  8 code-preserving permutations of the received word, each decoded
+  independently by `DumerDecoder(leaves=:fht)`, keeping whichever
+  candidate correlates best with the channel output (see
+  [ALGORITHMS.md](../ALGORITHMS.md#automorphism-ensemble-decoding-aed)).
+  The `-8` is the ensemble size `size`, not an iteration count or a
+  code parameter. `GMD/Dumer-FHT` and `Chase-II(t=4)/Reed` follow the
+  same pattern: wrapper (with its parameter, where it has one) before
+  the slash, the decoder it's built on after.
 
 ## Charts
 
