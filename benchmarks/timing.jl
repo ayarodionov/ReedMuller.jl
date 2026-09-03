@@ -35,6 +35,7 @@ function pipelines_for(code::RMCode, rng_seed::Int)
         ("AED-8/Dumer-FHT",          pe, AutomorphismEnsembleDecoder(code, DumerDecoder(leaves = :fht); size = 8, rng)),
         ("DS16 FHT leaves",          pe, DumerShabunovDecoder(16, leaves = :fht)),
         ("GLP cyclic",               pe, GLPDecoder(code, 4 * m; perms = :cyclic)),
+        ("GLP cyclic L=256",         pe, GLPDecoder(code, 256; perms = :cyclic)),
         ("GLP pairs (PmCr)",         pe, GLPDecoder(code, 2 * binomial(m, 2); perms = :pairs)),
         ("Graph search N=32",        pe, GraphSearchDecoder(iters = 32)),
     ]

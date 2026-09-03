@@ -48,11 +48,11 @@
 <circle cx="192.66666666666666" cy="59.41615277564567" r="4.5" fill="#e87ba4"/>
 <circle cx="321.3333333333333" cy="110.06915170379247" r="4.5" fill="#e87ba4"/>
 <circle cx="450.0" cy="204.16000062260866" r="4.5" fill="#e87ba4"/>
-<path d="M64.0,33.7 L192.7,49.2 L321.3,79.8 L450.0,129.7" fill="none" stroke="#008300" stroke-width="2.5"/>
-<circle cx="64.0" cy="33.74797747552374" r="4.5" fill="#008300"/>
-<circle cx="192.66666666666666" cy="49.170497774954654" r="4.5" fill="#008300"/>
-<circle cx="321.3333333333333" cy="79.83945832735779" r="4.5" fill="#008300"/>
-<circle cx="450.0" cy="129.71893701321216" r="4.5" fill="#008300"/>
+<path d="M64.0,69.6 L192.7,125.4 L321.3,222.8 L450.0,376.0" fill="none" stroke="#008300" stroke-width="2.5"/>
+<circle cx="64.0" cy="69.6063507249601" r="4.5" fill="#008300"/>
+<circle cx="192.66666666666666" cy="125.38257359745768" r="4.5" fill="#008300"/>
+<circle cx="321.3333333333333" cy="222.80317536248003" r="4.5" fill="#008300"/>
+<circle cx="450.0" cy="376.0" r="5" fill="#fcfcfb" stroke="#008300" stroke-width="2.5"/>
 <path d="M64.0,50.5 L192.7,89.9 L321.3,164.8 L450.0,302.7" fill="none" stroke="#4a3aa7" stroke-width="2.5"/>
 <circle cx="64.0" cy="50.450540453168955" r="4.5" fill="#4a3aa7"/>
 <circle cx="192.66666666666666" cy="89.86215755842494" r="4.5" fill="#4a3aa7"/>
@@ -74,7 +74,7 @@
 <circle cx="471" cy="116" r="5" fill="#e87ba4"/>
 <text x="482" y="120" font-size="12" fill="#0b0b0b">AED-8 / Dumer-FHT</text>
 <circle cx="471" cy="136" r="5" fill="#008300"/>
-<text x="482" y="140" font-size="12" fill="#0b0b0b">DS16 FHT leaves</text>
+<text x="482" y="140" font-size="12" fill="#0b0b0b">GLP cyclic L=256</text>
 <circle cx="471" cy="156" r="5" fill="#4a3aa7"/>
 <text x="482" y="160" font-size="12" fill="#0b0b0b">GLP cyclic</text>
 <circle cx="471" cy="176" r="5" fill="#e34948"/>

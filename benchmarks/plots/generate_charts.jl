@@ -1,8 +1,9 @@
 # Generates static SVG line charts (WER vs Eb/N0) for the RM(2,8-10)
 # comparison in ../RESULTS.md, from the results hardcoded below (see
-# benchmarks/results/compare_large_m8-10.log and
-# benchmarks/results/compare_large_resume_m10.log for the full run
-# that produced them — those logs are not tracked in the repo).
+# benchmarks/results/compare_large_m8-10.log,
+# benchmarks/results/compare_large_resume_m10.log, and
+# benchmarks/results/compare_large_glp256.log for the runs that
+# produced them — those logs are not tracked in the repo).
 #
 # Hand-rolled SVG (no plotting package dependency) using the
 # dataviz-skill's 8-slot categorical palette and mark specs: 2px
@@ -23,7 +24,7 @@ const SERIES = [
     ("RPA",                   "#1baf7a"),
     ("Dumer FHT leaves",      "#eda100"),
     ("AED-8 / Dumer-FHT",     "#e87ba4"),
-    ("DS16 FHT leaves",       "#008300"),
+    ("GLP cyclic L=256",      "#008300"),
     ("GLP cyclic",            "#4a3aa7"),
     ("Graph search N=32",     "#e34948"),
 ]
@@ -35,7 +36,7 @@ const DATA = Dict(
         "RPA"                  => [1.81e-01, 3.56e-02, 2.62e-03, 7.00e-05],
         "Dumer FHT leaves"     => [6.73e-01, 4.15e-01, 1.76e-01, 4.13e-02],
         "AED-8 / Dumer-FHT"    => [2.63e-01, 6.93e-02, 7.76e-03, 2.50e-04],
-        "DS16 FHT leaves"      => [2.75e-01, 8.41e-02, 1.34e-02, 8.60e-04],
+        "GLP cyclic L=256"     => [1.22e-01, 1.82e-02, 1.20e-03, 1.00e-05],
         "GLP cyclic"           => [1.51e-01, 2.64e-02, 1.70e-03, 2.00e-05],
         "Graph search N=32"    => [1.20e-01, 1.89e-02, 1.10e-03, 1.00e-05],
     ),
@@ -45,7 +46,7 @@ const DATA = Dict(
         "RPA"                  => [1.40e-01, 1.69e-02, 6.00e-04, 0.00e+00],
         "Dumer FHT leaves"     => [8.20e-01, 5.95e-01, 3.05e-01, 9.25e-02],
         "AED-8 / Dumer-FHT"    => [4.14e-01, 1.29e-01, 1.55e-02, 6.50e-04],
-        "DS16 FHT leaves"      => [4.73e-01, 2.00e-01, 4.80e-02, 5.37e-03],
+        "GLP cyclic L=256"     => [1.03e-01, 1.07e-02, 3.50e-04, 0.00e+00],
         "GLP cyclic"           => [2.08e-01, 3.75e-02, 2.15e-03, 2.00e-05],
         "Graph search N=32"    => [8.11e-02, 7.33e-03, 2.40e-04, 0.00e+00],
     ),
@@ -55,7 +56,7 @@ const DATA = Dict(
         "RPA"                  => [1.18e-01, 9.48e-03, 1.00e-04, 0.00e+00],
         "Dumer FHT leaves"     => [9.34e-01, 7.90e-01, 5.23e-01, 2.24e-01],
         "AED-8 / Dumer-FHT"    => [6.75e-01, 3.14e-01, 5.99e-02, 2.76e-03],
-        "DS16 FHT leaves"      => [7.27e-01, 4.39e-01, 1.61e-01, 3.15e-02],
+        "GLP cyclic L=256"     => [2.25e-01, 3.63e-02, 1.50e-03, 0.00e+00],
         "GLP cyclic"           => [4.21e-01, 1.16e-01, 1.00e-02, 1.10e-04],
         "Graph search N=32"    => [1.26e-01, 1.58e-02, 7.70e-04, 0.00e+00],
     ),

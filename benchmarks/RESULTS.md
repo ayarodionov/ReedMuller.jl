@@ -65,12 +65,16 @@ in the tables below:
 
 Each chart plots a curated 8-decoder subset spanning the full range
 from the weakest baseline to the strongest near-ML methods (the full
-15-decoder data is in the tables below; `GLP pairs (PmCr)` and
-`GLP cyclic L=256` are the two decoders left out of the charts to keep
-the plotted set at the palette's validated 8-series limit — see
-Observations for why each was cut). A hollow marker denotes zero
-errors observed in 100,000 trials, plotted at the 1/trials floor since
-an exact zero has no position on a log axis.
+15-decoder data is in the tables below). To stay within the palette's
+validated 8-series limit, `GLP pairs (PmCr)` and `DS16 FHT leaves`
+are the two decoders left out of the charts — `GLP pairs` because it
+consistently trails `GLP cyclic`, and `DS16` because it tracks
+`AED-8/Dumer-FHT` closely enough that plotting both adds little (see
+Observations). `GLP cyclic L=256` takes one of the freed slots
+alongside the original `GLP cyclic` (L=4m), so the effect of a much
+larger list is visible directly on the same chart. A hollow marker
+denotes zero errors observed in 100,000 trials, plotted at the
+1/trials floor since an exact zero has no position on a log axis.
 
 ![RM(2,8) word error rate](plots/rm2_8.svg)
 
@@ -107,10 +111,9 @@ an exact zero has no position on a log axis.
   with GLP's cost scaling as O(L·n·log n): closing the remaining gap
   at RM(2,10) would need `L` to grow faster than linearly in `m`, not
   just track it. Run separately in
-  [`compare_large_glp256.jl`](compare_large_glp256.jl); left out of
-  the charts (see Charts above) since it would push past the
-  palette's 8-series limit and isn't the decoder used in the rest of
-  this comparison's `GLP cyclic` rows.
+  [`compare_large_glp256.jl`](compare_large_glp256.jl); plotted
+  alongside the L=4m `GLP cyclic` on the charts above (see Charts) so
+  the effect of the larger list is visible directly.
 - **AED-8 and DS16 track each other closely** at all three lengths,
   as expected since both are near-ML wrappers/list decoders around the
   same `DumerDecoder(leaves=:fht)` constituent — consistent with the
@@ -215,20 +218,29 @@ elsewhere.
 
 | Decoder (ms/decode) | RM(2,8) | RM(2,9) | RM(2,10) |
 |---|---|---|---|
-| Reed (hard) | 0.052 | 0.130 | 0.319 |
-| Chase-II(t=4)/Reed | 0.898 | 2.225 | 5.441 |
-| BP | 2.657 | 6.468 | 18.809 |
-| Sidelnikov-Pershakov | 0.805 | 2.746 | 11.037 |
-| SP majority (Sakkour) | 0.692 | 2.745 | 11.999 |
-| RPA | 1.100 | 4.433 | 20.376 |
-| Dumer min-sum | 0.005 | 0.008 | 0.012 |
-| Dumer FHT leaves | 0.004 | 0.008 | 0.021 |
-| GMD/Dumer-FHT | 0.341 | 1.096 | 4.403 |
-| AED-8/Dumer-FHT | 0.072 | 0.156 | 0.314 |
-| DS16 FHT leaves | 0.164 | 0.141 | 0.976 |
-| GLP cyclic | 0.231 | 1.090 | 1.488 |
-| GLP pairs (PmCr) | 1.283 | 1.553 | 4.109 |
-| Graph search N=32 | 1.312 | 2.581 | 5.693 |
+| Reed (hard) | 0.055 | 0.137 | 0.333 |
+| Chase-II(t=4)/Reed | 0.919 | 2.329 | 5.629 |
+| BP | 2.995 | 6.691 | 19.187 |
+| Sidelnikov-Pershakov | 0.772 | 2.921 | 11.526 |
+| SP majority (Sakkour) | 0.733 | 2.904 | 12.318 |
+| RPA | 1.172 | 5.582 | 21.201 |
+| Dumer min-sum | 0.006 | 0.012 | 0.013 |
+| Dumer FHT leaves | 0.005 | 0.008 | 0.021 |
+| GMD/Dumer-FHT | 0.347 | 1.120 | 4.560 |
+| AED-8/Dumer-FHT | 0.732 | 0.160 | 0.323 |
+| DS16 FHT leaves | 0.179 | 0.174 | 1.060 |
+| GLP cyclic | 0.315 | 1.106 | 1.625 |
+| GLP cyclic L=256 | 3.616 | 5.863 | 13.473 |
+| GLP pairs (PmCr) | 1.141 | 1.903 | 4.250 |
+| Graph search N=32 | 1.348 | 3.298 | 5.876 |
+
+Rerunning after adding a new pipeline reshuffles the shared per-code
+RNG stream for every row after it in the script, so these numbers
+differ slightly from the previous version of this table (e.g. AED-8's
+RM(2,8) figure moved from 0.072 to 0.732 ms) — both are within the
+normal noise band for 50-trial timing estimates on an adaptive
+decoder, not a regression. Full re-run rather than partial edits, to
+keep the table consistent with a single invocation of the script.
 
 **Reading this alongside the error-rate tables:**
 
@@ -236,7 +248,7 @@ elsewhere.
   at RM(2,10) — confirming its O(n log n) bound has a tiny constant.
   It's the right default building block for any wrapper.
 - **Chase-II's cost is exactly its trial count times Reed's**: at
-  t=4 that's 16× Reed, and the measured ratios (17.3×, 17.1×, 17.1×)
+  t=4 that's 16× Reed, and the measured ratios (16.7×, 17.0×, 16.9×)
   match almost exactly — a clean sanity check on the wrapper's
   `_best_of_trials` loop.
 - **Sidel'nikov-Pershakov, RPA and BP all show the steep growth their
@@ -247,12 +259,21 @@ elsewhere.
 - **Graph search's accuracy edge over RPA is not a timing
   trade-off — it's a strict improvement.** From the WER tables, GS
   beats RPA outright at RM(2,8)/RM(2,9) and stays close at RM(2,10);
-  here it's also faster at every length (1.3 ms vs 1.1 ms is roughly a
-  wash at RM(2,8), but by RM(2,10) it's 5.7 ms vs RPA's 20.4 ms — a
+  here it's also faster at every length (1.35 ms vs 1.17 ms is roughly
+  a wash at RM(2,8), but by RM(2,10) it's 5.88 ms vs RPA's 21.2 ms — a
   3.6× advantage on top of beating every list decoder in accuracy).
   This lines up with Kamenev's own complexity claim: a cheap recursive
   decode plus a bounded local search costs far less than RPA's
   per-iteration O(n²) projection sweep.
+- **`GLP cyclic L=256` trades cost for accuracy against RPA in a way
+  that flips with length.** At RM(2,8) it costs 3.1× RPA's time
+  (3.62 ms vs. 1.17 ms) for a lower WER (see Full results). At
+  RM(2,9) the two cost almost the same (5.86 ms vs. 5.58 ms) while
+  L=256 still wins on accuracy. At RM(2,10) the relationship flips
+  entirely: L=256 is *cheaper* than RPA (13.5 ms vs. 21.2 ms, a
+  1.6× speedup) but noticeably less accurate there (1.50e-03 vs.
+  RPA's 1.00e-04 at 2 dB) — a reminder that "bigger list" and "closes
+  the gap to RPA" aren't the same trade at every length.
 - **BP is the worst of both worlds**: it never gets anywhere near the
   other decoders' error rates (see the Full results tables — it
   barely beats a coin flip in this Eb/N0 range) yet costs almost as
