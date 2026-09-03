@@ -79,6 +79,7 @@ end
         (RMCode(2, 4), PlotkinEncoder(), MLDecoder(RMCode(2, 4); basis = :plotkin)),
         (RMCode(2, 5), PlotkinEncoder(), GLPDecoder(RMCode(2, 5), 32; perms = :pairs)),
         (RMCode(3, 6), PlotkinEncoder(), GLPDecoder(RMCode(3, 6), 16; perms = :cyclic)),
+        (RMCode(2, 8), PlotkinEncoder(), GLPDecoder(RMCode(2, 8), 256; perms = :cyclic)),
         (RMCode(2, 5), PlotkinEncoder(), GraphSearchDecoder()),
         (RMCode(3, 6), PlotkinEncoder(), GraphSearchDecoder(iters = 16)),
         (RMCode(0, 4), PlotkinEncoder(), GraphSearchDecoder()),
@@ -327,6 +328,23 @@ end
         e_dumer += decode(DumerDecoder(leaves = :fht), c, llr) != msg
     end
     @test e_glp < e_dumer
+
+    # Larger L narrows the gap to near-ML, as documented in the
+    # README: ecclab runs :cyclic with L = 256 at this code length.
+    c8 = RMCode(2, 8)
+    enc8 = PlotkinEncoder()
+    ch8 = ReedMuller.BIAWGN_from_ebn0(2.0, c8)
+    glp_small = GLPDecoder(c8, 32; perms = :cyclic)
+    glp_big = GLPDecoder(c8, 256; perms = :cyclic)
+    e_small = 0
+    e_big = 0
+    for _ in 1:200
+        msg = bitrand(rng, dimension(c8))
+        llr = transmit(rng, ch8, encode(enc8, c8, msg))
+        e_small += decode(glp_small, c8, llr) != msg
+        e_big += decode(glp_big, c8, llr) != msg
+    end
+    @test e_big <= e_small
 
     @test_throws ArgumentError GLPDecoder(c, 4; perms = :pairs)     # L < ensemble
     @test_throws ArgumentError GLPDecoder(c, 16; perms = [[1, 2, 2, 4, 5, 6]])
