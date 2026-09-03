@@ -45,6 +45,18 @@ piece.
   code parameter. `GMD/Dumer-FHT` and `Chase-II(t=4)/Reed` follow the
   same pattern: wrapper (with its parameter, where it has one) before
   the slash, the decoder it's built on after.
+- **`DS16 FHT leaves`** is `DumerShabunovDecoder(16, leaves=:fht)` —
+  not a wrapper, but `DumerDecoder`'s own list-decoding sibling (see
+  [ALGORITHMS.md](../ALGORITHMS.md#dumer-shabunov-recursive-list-decoder)).
+  `DS` = Dumer-Shabunov; `16` is the list size `L` (up to 16 candidate
+  decoding paths survive at once, rather than the single path
+  `DumerDecoder` commits to); `FHT leaves` means the recursion
+  terminates at first-order nodes and decodes them exactly via the
+  fast Hadamard transform, rather than recursing all the way down to
+  single-bit repetition-code leaves (the `leaves=:bits` default seen
+  in plain `Dumer min-sum`/`Dumer FHT leaves` above). `L=1` with
+  `leaves=:bits` would reduce to plain `DumerDecoder`; larger `L`
+  trades cost for approaching ML.
 
 ## Charts
 
