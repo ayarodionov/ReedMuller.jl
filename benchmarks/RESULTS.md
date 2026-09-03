@@ -33,30 +33,30 @@ piece.
   `DumerShabunovDecoder(16, leaves=:fht)`, `GLPDecoder` (`:cyclic` and
   `:pairs`/PmCr ensembles), `GraphSearchDecoder(iters=32)`. See
   [ALGORITHMS.md](../ALGORITHMS.md) for what each of these does.
-- **Table labels for the generic wrappers** name the wrapper, its
-  parameter, and the constituent decoder it wraps, separated by a
-  slash: **`AED-8/Dumer-FHT`** is
-  `AutomorphismEnsembleDecoder(DumerDecoder(leaves=:fht); size=8)` —
-  8 code-preserving permutations of the received word, each decoded
-  independently by `DumerDecoder(leaves=:fht)`, keeping whichever
-  candidate correlates best with the channel output (see
-  [ALGORITHMS.md](../ALGORITHMS.md#automorphism-ensemble-decoding-aed)).
-  The `-8` is the ensemble size `size`, not an iteration count or a
-  code parameter. `GMD/Dumer-FHT` and `Chase-II(t=4)/Reed` follow the
-  same pattern: wrapper (with its parameter, where it has one) before
-  the slash, the decoder it's built on after.
-- **`DS16 FHT leaves`** is `DumerShabunovDecoder(16, leaves=:fht)` —
-  not a wrapper, but `DumerDecoder`'s own list-decoding sibling (see
-  [ALGORITHMS.md](../ALGORITHMS.md#dumer-shabunov-recursive-list-decoder)).
-  `DS` = Dumer-Shabunov; `16` is the list size `L` (up to 16 candidate
-  decoding paths survive at once, rather than the single path
-  `DumerDecoder` commits to); `FHT leaves` means the recursion
-  terminates at first-order nodes and decodes them exactly via the
-  fast Hadamard transform, rather than recursing all the way down to
-  single-bit repetition-code leaves (the `leaves=:bits` default seen
-  in plain `Dumer min-sum`/`Dumer FHT leaves` above). `L=1` with
-  `leaves=:bits` would reduce to plain `DumerDecoder`; larger `L`
-  trades cost for approaching ML.
+### Decoder label glossary
+
+Table labels for the generic wrappers (`ChaseDecoder`, `GMDDecoder`,
+`AutomorphismEnsembleDecoder`) name the wrapper, its parameter where
+it has one, and the constituent decoder it wraps, separated by a
+slash — wrapper before, decoder it's built on after. Every label used
+in the tables below:
+
+| Label | What it is |
+|---|---|
+| `Reed (hard)` | `ReedDecoder()` — Reed's 1954 majority-logic decoder. "(hard)" flags that it's *hard-decision*: LLRs are thresholded to bits before decoding, discarding reliability information ([details](../ALGORITHMS.md#reeds-majority-logic-decoder)). |
+| `Chase-II(t=4)/Reed` | `ChaseDecoder(code, ReedDecoder(); t=4)` — tries all 2⁴=16 sign-flip patterns of the `t=4` least-reliable positions through `ReedDecoder`, keeping the best-correlating result; turns a hard decoder into a soft-input one ([details](../ALGORITHMS.md#chase-ii-decoding)). |
+| `BP` | `BPDecoder(code)` — Belief Propagation (sum-product) on the dual code's redundant parity-check set. Included as a weak-decoder baseline, not a method to reach for ([details](../ALGORITHMS.md#belief-propagation-sum-product-decoder)). |
+| `Sidelnikov-Pershakov` | `SidelnikovPershakovDecoder()`, default `voting=:weighted` — derivative decoding specific to RM(2,m) ([details](../ALGORITHMS.md#sidelnikov-pershakov-derivative-decoder)). |
+| `SP majority (Sakkour)` | The same decoder with `voting=:majority` — Sakkour's simplified plain-majority vote in place of the reliability-weighted vote. |
+| `RPA` | `RPADecoder()` — Recursive Projection-Aggregation (Ye & Abbe); default `iters=0` uses the paper's `⌈m/2⌉` ([details](../ALGORITHMS.md#recursive-projection-aggregation-rpa-decoder)). |
+| `Dumer min-sum` | `DumerDecoder()` at its defaults: `combine=:minsum` check-node rule, `leaves=:bits` (recurses all the way to single-bit/repetition leaves) ([details](../ALGORITHMS.md#dumers-recursive-decoder)). |
+| `Dumer FHT leaves` | `DumerDecoder(leaves=:fht)` — same recursion, but terminates at first-order nodes and decodes them exactly via the fast Hadamard transform instead of recursing further. |
+| `GMD/Dumer-FHT` | `GMDDecoder(code, DumerDecoder(leaves=:fht))` — erases increasing numbers of least-reliable positions and keeps the best-correlating `Dumer FHT leaves` result ([details](../ALGORITHMS.md#generalized-minimum-distance-gmd-decoding)). |
+| `AED-8/Dumer-FHT` | `AutomorphismEnsembleDecoder(code, DumerDecoder(leaves=:fht); size=8)` — 8 code-preserving permutations of the received word, each decoded independently by `Dumer FHT leaves`, keeping whichever candidate correlates best with the channel output; the `-8` is the ensemble size `size`, not an iteration count ([details](../ALGORITHMS.md#automorphism-ensemble-decoding-aed)). |
+| `DS16 FHT leaves` | `DumerShabunovDecoder(16, leaves=:fht)` — not a wrapper but `DumerDecoder`'s list-decoding sibling. `DS` = Dumer-Shabunov; `16` is the list size `L` (up to 16 candidate decoding paths survive at once, instead of the single path `DumerDecoder` commits to); `FHT leaves` has the same meaning as above. `L=1` with `leaves=:bits` would reduce to plain `DumerDecoder`; larger `L` trades cost for approaching ML ([details](../ALGORITHMS.md#dumer-shabunov-recursive-list-decoder)). |
+| `GLP cyclic` | `GLPDecoder(code, L; perms=:cyclic)` — Global-List-with-Permutations: seeds one *shared* Dumer-Shabunov-style list with the `m` cyclic shifts of the received word's variables, rather than decoding each permutation independently the way AED does ([details](../ALGORITHMS.md#global-list-with-permutations-glp-decoder)). |
+| `GLP pairs (PmCr)` | The same decoder with `perms=:pairs` — the larger `C(m,2)`-permutation ensemble (`PmCr` in the ecclab naming this technique is adapted from) instead of the `m`-permutation cyclic ensemble. |
+| `Graph search N=32` | `GraphSearchDecoder(iters=32)` — Kamenev's local graph search; `N=32` is the maximum number of greedy steps (`iters`) ([details](../ALGORITHMS.md#local-graph-search-decoder)). |
 
 ## Charts
 
