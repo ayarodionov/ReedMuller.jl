@@ -88,8 +88,9 @@ ML. Complexity O(L·n·log n). Message convention: `:plotkin`.
 **File:** [`src/decoders/sidelnikov_pershakov.jl`](src/decoders/sidelnikov_pershakov.jl) — `SidelnikovPershakovDecoder`
 **References:** V. M. Sidel'nikov, A. S. Pershakov, "Decoding of
 Reed-Muller codes with a large number of errors", Probl. Inf. Transm.,
-1992; B. Sakkour, "Decoding of second order Reed-Muller codes with a
-large number of errors", IEEE ITW, 2005 (the `:majority` voting mode).
+vol. 28, no. 3, pp. 269-281, 1992; B. Sakkour, "Decoding of second
+order Reed-Muller codes with a large number of errors", IEEE ITW,
+2005 (the `:majority` voting mode).
 
 For second-order codes RM(2, m) only. A codeword is a quadratic
 Boolean function f(x) = xᵀQx ⊕ ⟨l, x⟩ ⊕ a₀, so its derivative in any

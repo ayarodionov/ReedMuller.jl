@@ -153,7 +153,8 @@ julia --project=. -e 'using Pkg; Pkg.test()'
   (reference C implementations of dtrm0/dtrm1/dtrm_glp),
   https://github.com/kshabunov/ecclab.
 * V. M. Sidel'nikov, A. S. Pershakov, "Decoding of Reed-Muller codes
-  with a large number of errors", Probl. Inf. Transm., 1992.
+  with a large number of errors", Probl. Inf. Transm., vol. 28, no. 3,
+  pp. 269-281, 1992.
 * B. Sakkour, "Decoding of second order Reed-Muller codes with a
   large number of errors", IEEE ITW, 2005.
 * M. Ye, E. Abbe, "Recursive projection-aggregation decoding of

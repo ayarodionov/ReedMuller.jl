@@ -3,7 +3,8 @@
 
 Sidel'nikov-Pershakov derivative decoding for second-order codes
 RM(2, m) (Sidel'nikov & Pershakov, "Decoding of Reed-Muller codes
-with a large number of errors", Probl. Inf. Transm., 1992).
+with a large number of errors", Probl. Inf. Transm., vol. 28, no. 3,
+pp. 269-281, 1992).
 
 A codeword is a quadratic Boolean function f(x) = xᵀQx ⊕ ⟨l, x⟩ ⊕ a₀,
 so its derivative in any direction b, D_b f(x) = f(x) ⊕ f(x ⊕ b) =
